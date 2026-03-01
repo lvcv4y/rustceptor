@@ -1,0 +1,175 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@layer base {
+  :root {
+    --background: 220 30% 97%;
+    --foreground: 220 20% 20%;
+
+    --card: 220 30% 95%;
+    --card-foreground: 220 20% 20%;
+
+    --popover: 220 30% 95%;
+    --popover-foreground: 220 20% 20%;
+
+    --primary: 220 60% 60%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 25% 91%;
+    --secondary-foreground: 220 20% 35%;
+
+    --muted: 220 20% 93%;
+    --muted-foreground: 220 15% 50%;
+
+    --accent: 220 60% 60%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 65% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 20% 88%;
+    --input: 220 20% 88%;
+    --ring: 220 60% 60%;
+
+    --radius: 0.5rem;
+
+    --surface-glass: 220 30% 95% / 0.7;
+    --glow-primary: 220 60% 60% / 0.12;
+    --glow-strong: 220 60% 60% / 0.2;
+
+    --method-get: 152 55% 42%;
+    --method-post: 220 70% 55%;
+    --method-put: 38 80% 50%;
+    --method-delete: 0 65% 55%;
+    --method-patch: 280 50% 55%;
+
+    --sidebar-background: 220 30% 95%;
+    --sidebar-foreground: 220 20% 20%;
+    --sidebar-primary: 220 60% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 20% 93%;
+    --sidebar-accent-foreground: 220 20% 20%;
+    --sidebar-border: 220 20% 88%;
+    --sidebar-ring: 220 60% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+}
+
+/*
+ * Toast
+ */
+
+/* Notification animations */
+@keyframes notif-slide-in {
+  0% {
+    opacity: 0;
+    transform: translateX(100%) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes notif-slide-out {
+  0% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+    max-height: 120px;
+    margin-top: 12px;
+  }
+  60% {
+    opacity: 0;
+    transform: translateX(80%) scale(0.9);
+    max-height: 120px;
+    margin-top: 12px;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(100%) scale(0.85);
+    max-height: 0;
+    margin-top: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+}
+
+@keyframes notif-progress {
+  0% { width: 100%; }
+  100% { width: 0%; }
+}
+
+.notif-enter {
+  animation: notif-slide-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.notif-exit {
+  animation: notif-slide-out 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.notif-progress {
+  animation: notif-progress linear forwards;
+}
+
+/* Notification variant styles */
+.notif-error {
+  background-color: hsl(0 80% 92%);
+  border-color: hsl(0 70% 82%);
+}
+.notif-error .notif-icon { color: hsl(0 65% 55%); }
+.notif-error .notif-title,
+.notif-error .notif-message { color: hsl(0 50% 35%); }
+.notif-error .notif-close { color: hsl(0 65% 55%); }
+.notif-error .notif-progress-bar { background-color: hsl(0 65% 55% / 0.4); }
+
+.notif-warning {
+  background-color: hsl(40 90% 90%);
+  border-color: hsl(40 75% 78%);
+}
+.notif-warning .notif-icon { color: hsl(38 80% 50%); }
+.notif-warning .notif-title,
+.notif-warning .notif-message { color: hsl(35 55% 30%); }
+.notif-warning .notif-close { color: hsl(38 80% 50%); }
+.notif-warning .notif-progress-bar { background-color: hsl(38 80% 50% / 0.4); }
+
+.notif-success {
+  background-color: hsl(145 60% 90%);
+  border-color: hsl(145 45% 78%);
+}
+.notif-success .notif-icon { color: hsl(145 55% 42%); }
+.notif-success .notif-title,
+.notif-success .notif-message { color: hsl(145 40% 28%); }
+.notif-success .notif-close { color: hsl(145 55% 42%); }
+.notif-success .notif-progress-bar { background-color: hsl(145 55% 42% / 0.4); }
+
+.notif-info {
+  background-color: hsl(210 80% 92%);
+  border-color: hsl(210 65% 82%);
+}
+.notif-info .notif-icon { color: hsl(210 70% 50%); }
+.notif-info .notif-title,
+.notif-info .notif-message { color: hsl(210 50% 32%); }
+.notif-info .notif-close { color: hsl(210 70% 50%); }
+.notif-info .notif-progress-bar { background-color: hsl(210 70% 50% / 0.4); }
+
+.notif-debug {
+  background-color: hsl(270 60% 93%);
+  border-color: hsl(270 45% 82%);
+}
+.notif-debug .notif-icon { color: hsl(270 50% 55%); }
+.notif-debug .notif-title,
+.notif-debug .notif-message { color: hsl(270 35% 35%); }
+.notif-debug .notif-close { color: hsl(270 50% 55%); }
+.notif-debug .notif-progress-bar { background-color: hsl(270 50% 55% / 0.4); }

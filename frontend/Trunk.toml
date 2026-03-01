@@ -1,0 +1,13 @@
+[build]
+public_url = "/front/"
+
+# network config
+[serve]
+addresses = ["127.0.0.1"]
+port = 8080
+
+# Allow to access both back and front from `trunk serve`.
+# This way, it is possible de have trunk hot reload.
+[[proxy]]
+backend = "http://localhost:8000/backapi"
+rewrite = "/backapi"
