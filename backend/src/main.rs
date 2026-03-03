@@ -24,7 +24,7 @@ fn rocket() -> _ {
 
     rocket::build()
         .manage(EventChannels { captured_reqs: tx })
-        .mount("/front/", FileServer::from(relative!("../frontend/dist")))
+        //.mount("/front/", FileServer::from(relative!("../frontend/dist")))
         .mount("/", routes())
         .register("/", catchers())
 }

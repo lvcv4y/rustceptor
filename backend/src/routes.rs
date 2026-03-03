@@ -22,8 +22,8 @@ use crate::{MASTER_KEY, EventChannels};
 pub fn routes() -> Vec<Route> {
     routes![
         // Redirection to frontend
-        front_redirect,
-        front_index_fix,
+        // front_redirect,
+        // front_index_fix,
 
         // Api
         add,
