@@ -3,6 +3,9 @@
 use std::sync::LazyLock;
 use rocket::tokio::sync::broadcast::{channel, Sender};
 use random_string::generate;
+use systemd_journal_logger::JournalLog;
+use log::{info, LevelFilter};
+
 
 pub mod routes;
 pub mod models;
@@ -23,7 +26,12 @@ pub struct EventChannels {
 
 #[launch]
 fn rocket() -> _ {
-    println!("<6>Master key: {}", *MASTER_KEY);
+    // journal logger init
+    JournalLog::new().unwrap().install().unwrap();
+    log::set_max_level(LevelFilter::Info);
+    
+
+    info!("Master key: {}", *MASTER_KEY);
     
     let (tx, _) = channel::<String>(1024);
 
