@@ -23,7 +23,7 @@ pub struct EventChannels {
 
 #[launch]
 fn rocket() -> _ {
-    println!("Master key: {}", *MASTER_KEY);
+    println!("<6>Master key: {}", *MASTER_KEY);
     
     let (tx, _) = channel::<String>(1024);
 
