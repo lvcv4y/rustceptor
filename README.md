@@ -129,6 +129,15 @@ That's where I store the ideas of features and the things I wanna work on. There
     - Switch to "define" when clicking "add route" ; even prevent "inspect"
     - use lucide-yew instead of AI generated SVGs
 
+- Other bugs
+    - Redirect LoginPage to HomePage if user already logged-in
+
+- Deployment
+    - Provide a nix flake to ease deployment
+    - Provide minimal configuration.nix and/or nginx config to have a working setup.
+    - Add a Deployment guide
+    - Make nginx / proxy use optional (ie be able to add /front/ dispatcher route).
+
 - Codebase changes
     - Change some defaults: Inspect panel by default, maybe select default route by default?
     - Define constants and replace hardcoded values.
@@ -137,6 +146,7 @@ That's where I store the ideas of features and the things I wanna work on. There
 
 > Some ideas I had and that would be nice to implement. I don't know if I will actually implement those things, but hey, at least they lay here.
 
+- Use env variables for configuration variables (master key, proxy usage, etc).
 
 - Settings panel (for now, unused)
     - Add some settings: dark theme, tutorial, "log" (actually, toast) levels, etc
