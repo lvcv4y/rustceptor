@@ -1,12 +1,11 @@
 use std::io::Cursor;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 use rocket::response::stream::{Event, EventStream};
 use rocket::{Data, Response, Route, State};
-use rocket::fs::NamedFile;
 use rocket::http::{Status, Cookie, CookieJar};
 use rocket::Catcher;
-use rocket::response::{Redirect, Responder};
+use rocket::response::Responder;
 
 use rocket::serde::json::Json;
 use rocket::tokio::select;
@@ -60,17 +59,22 @@ pub fn catchers() -> impl Into<Vec<Catcher>> {
     ]
 }
 
-// Fix /front broken route using rank < 10
-#[get("/front")]
-fn front_index_fix() -> Redirect {
-    Redirect::to(uri!("/front/home"))
-}
+/*
+
+// Unused code: nginx proxy in front of the server dispatches /front/
+// TODO add code on bool config using a macro?
 
 // Front redirection fallback in case of unmatched file
+use rocket::fs::NamedFile;
+use rocket::response::Redirect;
+use std::path::Path;
 #[get("/front/<_..>", rank = 11)]
 async fn front_redirect() -> Result<Option<NamedFile>, Redirect> {
     Ok(NamedFile::open(Path::new("../frontend/dist/index.html")).await.ok())
 }
+
+*/
+
 
 /*
  "/backapi/<any..>" is reserved for internal backend usage. Logged-in required, except /backapi/login
