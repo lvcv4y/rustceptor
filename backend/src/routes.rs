@@ -185,7 +185,7 @@ fn page404() -> &'static str {
 // TODO make macro
 fn is_logged_in(jar: &CookieJar) -> bool {
     match jar.get("session").map(|c| c.value()) {
-        Some(MASTER_KEY) => true,
+        Some(s) => s == *MASTER_KEY,  // That may be unsafe (timing attack?)
         _ => false,
     }
 }
@@ -220,9 +220,9 @@ fn delete(req: Json<DeleteRouteRequest>, jar: &CookieJar) -> Status {
 
 #[post("/backapi/login", data="<login_req>")]
 fn login_post(login_req: Json<LoginRequest>, jar: &CookieJar) -> Status {
-    if login_req.key == MASTER_KEY {
+    if login_req.key == *MASTER_KEY {  // That may be unsafe (timing attack?)
         jar.add(
-            Cookie::build(("session", MASTER_KEY))
+            Cookie::build(("session", MASTER_KEY.to_string()))
                 .path("/backapi")
         );
         Status::Ok

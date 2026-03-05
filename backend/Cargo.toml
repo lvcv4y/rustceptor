@@ -11,3 +11,4 @@ base64 = "0.22"
 paste = "1.0"
 uuid = { version = "1.21.0", features = ["v4"] }
 chrono = "0.4"
+random-string = "1.1"

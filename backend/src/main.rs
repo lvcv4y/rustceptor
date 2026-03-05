@@ -1,7 +1,8 @@
 #[macro_use] extern crate rocket;
 
-use rocket::fs::{FileServer, relative};
+use std::sync::LazyLock;
 use rocket::tokio::sync::broadcast::{channel, Sender};
+use random_string::generate;
 
 pub mod routes;
 pub mod models;
@@ -10,7 +11,10 @@ pub mod capture;
 
 use crate::routes::{routes, catchers};
 
-pub const MASTER_KEY: &'static str = "changeme";  // TODO: randomize and print on start
+// TODO use env + secret.
+pub static MASTER_KEY: LazyLock<String> = LazyLock::new(|| {
+    generate(40, "azertyuiopqsdfghjklmwxcvbnAZERTYUIOPQSDFGHJKLMWXCVBN1234567890")
+});
 
 pub struct EventChannels {
     // Only one for now
@@ -19,6 +23,7 @@ pub struct EventChannels {
 
 #[launch]
 fn rocket() -> _ {
+    println!("Master key: {}", *MASTER_KEY);
     
     let (tx, _) = channel::<String>(1024);
 
