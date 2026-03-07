@@ -27,7 +27,7 @@ This project is- nah no one cares about that. Just be kind and credit me :)
 
 ## Installation
 
-I **strongly** advise you to use the Nix way. However, if you're out of space and can't afford any additional storage in this economy, there's also a more classical guide available.
+I **strongly** advise you to follow the Nix way. However, if you're out of space and can't afford any additional storage in this economy, there's also a more classical guide available.
 
 Either way, be sure to have a local copy of this repository first.
 
