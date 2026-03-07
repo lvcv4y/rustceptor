@@ -118,16 +118,15 @@
         "tailwindcss-animate": "tailwindcss-animate"
       },
       "locked": {
-        "lastModified": 1772902761,
-        "narHash": "sha256-KvvLfTdVibzb0pko80P6EZdmwlSNINDa6A3aukNJ7RQ=",
+        "lastModified": 1772912638,
+        "narHash": "sha256-F0Lyrghhx8hMjKNIBhouMkikkZv6+xlZU8WJxRVrEVk=",
         "owner": "lvcv4y",
         "repo": "rustceptor",
-        "rev": "4ed5ad14e1694b292a589de5f5c5d82c234f212d",
+        "rev": "15b3b13b933bba00df6d9a261605e6e9e31ce2db",
         "type": "github"
       },
       "original": {
         "owner": "lvcv4y",
-        "ref": "deploy",
         "repo": "rustceptor",
         "type": "github"
       }
