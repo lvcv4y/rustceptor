@@ -87,39 +87,29 @@
 
       craneLibFront = (crane.mkLib pkgs).overrideToolchain rustToolchainFor;
 
-      # frontSrc = pkgs.lib.cleanSourceWith {
-      #   src = ./frontend/.;
-      #   filter = path: type: 
-      #     (pkgs.lib.hasSuffix ".html" path) || 
-      #     (pkgs.lib.hasSuffix ".scss" path) || 
-      #     (pkgs.lib.hasSuffix ".css"  path) || 
-      #     (pkgs.lib.hasSuffix ".js"   path) || 
-      #     (pkgs.lib.hasSuffix ".json" path) || 
-      #     (craneLibFront.filterCargoSources path type);
-      # };
-      unfilteredRoot = ./.; # The original, unfiltered source
       frontSrc =
-      let
-        unfilteredRoot = ./frontend/.;
-      in lib.fileset.toSource {
-        root = unfilteredRoot;
-        fileset = lib.fileset.unions [
-          # Default files from crane (Rust and cargo files)
-          (craneLibFront.fileset.commonCargoSources unfilteredRoot)
-          (lib.fileset.fileFilter (
-            file:
-            lib.any file.hasExt [
-              "html"
-              "scss"
-              "css"
-              "js"
-              "json"
-            ]
-          ) unfilteredRoot)
-          # Example of a folder for images, icons, etc
-          # (lib.fileset.maybeMissing ./assets)
-        ];
-      };
+        let
+          unfilteredRoot = ./frontend/.;
+        in lib.fileset.toSource {
+          root = unfilteredRoot;
+          fileset = lib.fileset.unions [
+            # Default files from crane (Rust and cargo files)
+            (craneLibFront.fileset.commonCargoSources unfilteredRoot)
+            (lib.fileset.fileFilter (
+              file:
+              lib.any file.hasExt [
+                "html"
+                "scss"
+                "css"
+                "js"
+                "json"
+              ]
+            ) unfilteredRoot)
+
+            # Example of a folder for images, icons, etc
+            # (lib.fileset.maybeMissing ./assets)
+          ];
+        };
 
       frontCommonArgs = {
         src = frontSrc;
@@ -142,10 +132,6 @@
         # Gotta match the Cargo.lock wasm-bindgen version
         wasm-bindgen-cli = nixpkgs-wasm.legacyPackages.${system}.wasm-bindgen-cli;
 
-        # Custom environment variables can be passed here
-        # *without* rebuilding all dependency crates
-        # ENVIRONMENT = "hello";
-
         preBuild =
           # Somewhat needed, Trunk has some trouble finding where to build
           "export HOME=$TMPDIR;\n"
@@ -158,18 +144,52 @@
             cp -r ${tailwindcss-animate}/* node_modules/tailwindcss-animate/
           '';
       });
+
+      /*****************
+       * Dev commands  *
+       *****************/
+
+      backend-cmd = pkgs.writeShellScriptBin "backend" ''
+        export RUST_LOG=debug;
+        export ENV=debug;
+        ${backend}/bin/backend
+      '';
+
+      backend-front-cmd = pkgs.writeShellScriptBin "backwfront" ''
+        export RUST_LOG=debug;
+        export ENV=debug;
+        export FRONT_PATH=${frontend};
+        ${backend}/bin/backend
+      '';
+
+      # That's not really the purest way of doing this, but that'll do for now.
+      frontend-cmd = pkgs.writeShellScriptBin "frontend" ''
+        RUST_LOG=debug;
+        ENV=debug;
+        (cd ./frontend && ${pkgs.trunk}/bin/trunk serve)
+      '';
     
     in {
       packages = {
         inherit frontend backend;
       };
 
-      # Todo Provide:
-      #  - "Debug" build versions (build with env variable as "debug").
-      #     - Frontend
-      #     - Backend
-      #  - "trunk serve" command
+      apps = {
+        frontend = {
+          type = "app";
+          program = "${frontend-cmd}/bin/frontend";
+        };
 
+        backend = {
+          type = "app";
+          program = "${backend-cmd}/bin/backend";
+        };
+
+        backwfront = {
+          type = "app";
+          program = "${backend-front-cmd}/bin/backwfront";
+        };
+      };
     }
   );
 }
