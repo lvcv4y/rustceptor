@@ -1,29 +1,26 @@
 use std::io::Cursor;
-use std::path::PathBuf;
+use std::path::{PathBuf, Path};
 
 use rocket::response::stream::{Event, EventStream};
 use rocket::{Data, Response, Route, State};
 use rocket::http::{Status, Cookie, CookieJar};
 use rocket::Catcher;
 use rocket::response::Responder;
+use rocket::fs::NamedFile;
 
 use rocket::serde::json::Json;
 use rocket::tokio::select;
 
 use paste::paste;
 
+use crate::{FRONT_PATH, MASTER_KEY, EventChannels};
 use crate::dyn_content::*;
 use crate::models::*;
 use crate::capture::*;
-use crate::{MASTER_KEY, EventChannels};
 
 // TODO use macro or lazy_static
 pub fn routes() -> Vec<Route> {
-    routes![
-        // Redirection to frontend
-        // front_redirect,
-        // front_index_fix,
-
+    let mut routes = routes![
         // Api
         add,
         delete,
@@ -49,7 +46,13 @@ pub fn routes() -> Vec<Route> {
         debug_dispatcher_post,
         dispatcher_patch,
         debug_dispatcher_patch,
-    ]
+    ];
+
+    if let Some(_) = *FRONT_PATH {
+        routes.extend(routes![front_redirect]);
+    }
+
+    routes
 }
 
 // TODO use macro or lazy_static
@@ -59,21 +62,17 @@ pub fn catchers() -> impl Into<Vec<Catcher>> {
     ]
 }
 
-/*
-
-// Unused code: nginx proxy in front of the server dispatches /front/
-// TODO add code on bool config using a macro?
 
 // Front redirection fallback in case of unmatched file
-use rocket::fs::NamedFile;
-use rocket::response::Redirect;
-use std::path::Path;
 #[get("/front/<_..>", rank = 11)]
-async fn front_redirect() -> Result<Option<NamedFile>, Redirect> {
-    Ok(NamedFile::open(Path::new("../frontend/dist/index.html")).await.ok())
+async fn front_redirect() -> Result<Option<NamedFile>, Status> {
+    if let Some(path) = &*FRONT_PATH {
+        Ok(NamedFile::open(Path::new(&(path.to_owned() + &"/index.html"))).await.ok())
+    } else {
+        Err(Status::from_code(500).unwrap())
+    }
 }
 
-*/
 
 
 /*

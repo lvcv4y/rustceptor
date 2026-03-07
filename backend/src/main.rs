@@ -1,7 +1,7 @@
 #[macro_use] extern crate rocket;
 
-use std::sync::LazyLock;
-use rocket::tokio::sync::broadcast::{channel, Sender};
+use std::{sync::LazyLock};
+use rocket::{fs::FileServer, tokio::sync::broadcast::{Sender, channel}};
 use random_string::generate;
 use systemd_journal_logger::JournalLog;
 use log::{info, LevelFilter};
@@ -20,6 +20,10 @@ pub static MASTER_KEY: LazyLock<String> = LazyLock::new(|| {
     generate(40, "azertyuiopqsdfghjklmwxcvbnAZERTYUIOPQSDFGHJKLMWXCVBN1234567890")
 });
 
+pub static FRONT_PATH: LazyLock<Option<String>> = LazyLock::new(|| {
+    env::var("FRONT_PATH").and_then(|s| { Ok(Some(s)) }).unwrap_or(None)
+});
+
 pub struct EventChannels {
     // Only one for now
     captured_reqs: Sender<String>, // Serialized JSON
@@ -29,7 +33,7 @@ pub struct EventChannels {
 fn rocket() -> _ {
     // journal logger init
 
-    let env = env::var("ENV").unwrap_or("DEBUG".to_string());
+    let env = env::var("ENV").unwrap_or("PROD".to_string());
 
     match &*env {
         "PROD" => {
@@ -48,9 +52,15 @@ fn rocket() -> _ {
     
     let (tx, _) = channel::<String>(1024);
 
-    rocket::build()
+    let mut r = rocket::build()
         .manage(EventChannels { captured_reqs: tx })
-        //.mount("/front/", FileServer::from(relative!("../frontend/dist")))
         .mount("/", routes())
-        .register("/", catchers())
+        .register("/", catchers());
+
+    if let Some(path) = &*FRONT_PATH {
+        debug!("Front Path: {}", path);
+        r = r.mount("/front/", FileServer::from(path));
+    }
+
+    r
 }
