@@ -7,7 +7,7 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=25.11";
 
-    rustceptor.url = "github:lvcv4y/rustceptor?ref=deploy";
+    rustceptor.url = "github:lvcv4y/rustceptor";
   };
 
   outputs = {
