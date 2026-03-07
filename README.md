@@ -130,6 +130,16 @@ With two special cases:
 
 The second case allows the backend to capture a request if the frontend server is upfront, as `trunk serve` will proxy `/backapi/*` to `localhost:8000`. That could be useful for having trunk hot reload and test reaction when a captured request event is received.
 
+### Logs and Master key
+
+The master key is printed in logs when the backend starts. It is randomly generated at each start for now. 
+
+Depending on the ENV environment variable value, the logs get sent to different outputs:
+  - If `ENV=PROD`, it gets sent to the systemd journal ;
+  - If `ENV=DEBUG` or `ENV=AnythingElse`, it is sent to `stdout` (printed in terminal).
+
+If `ENV` isn't set, it default to `PROD`.
+
 ## Deployment
 
 If you wish to deploy this project to you own little server, a **flake-based Nix configuration** is available in the `nix-deploy-example` folder.
