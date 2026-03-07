@@ -1,4 +1,12 @@
+# Rust compiler outputs
 /backend/target
 /frontend/target
+
+# Trunk compiler outputs
 /frontend/dist
+
+# Node dependencies
 /frontend/node_modules
+
+# Nix build symlink output
+/result

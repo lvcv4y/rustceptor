@@ -27,11 +27,57 @@ This project is- nah no one cares about that. Just be kind and credit me :)
 
 ## Installation
 
-### Dependencies
+I **strongly** advise you to use the Nix way. However, if you're out of space and can't afford any additional storage in this economy, there's also a more classical guide available.
 
-Of course, you first need Rust and Cargo. [Follow the official guide](https://doc.rust-lang.org/book/ch01-01-installation.html) if you don't have it installed yet.
+Either way, be sure to have a local copy of this repository first.
 
-You also need to have a local copy of this repository (yeah, surprisingly).
+### Join Nix, embrace modernity
+
+This repository comes with a beautiful [Nix](https://nixos.org) flake that allows you to run and build the projects in a ✨pure✨ and ✨reproducible✨ way.
+
+#### Dependencies
+
+To use it, you'll first have to install the [Nix package manager](https://nixos.org/download/) and [enable the flakes feature](https://dev.to/arnu515/getting-started-with-nix-and-nix-flakes-mml).
+
+#### Run
+
+> All the commands given must be typed from the root folder of this repository.
+
+To run this project, you have two choices: either just **run the backend server**, or **use a trunk server**.
+
+##### One server to rule 'em all
+
+This option let Rocket serve the compiled frontend files.
+
+```bash
+nix run .#backwfront
+```
+
+The app should be accessible at http://localhost:8000/front/home
+
+##### Frontend development
+
+If you are working on the frontend, the trunk hot-reload feature might be useful. To access it, first run the backend API **in another terminal**:
+
+```bash
+nix run .#backend
+```
+
+You can then start the trunk server:
+
+```bash
+nix run .#frontend
+```
+
+The app should be accessible at http://localhost:8080/front/home (the trunk server is listening to 8080, the backend's 8000).
+
+### Good ol' ways
+
+If you're not ready to make the step, feel free to use the prehistoric tools.
+
+#### Dependencies
+
+Of course, you'll first need Rust and Cargo. [Follow the official guide](https://doc.rust-lang.org/book/ch01-01-installation.html) if you don't have it installed yet.
 
 Yew also requires `trunk` and a WASM compiler to work. Following [the official guide](https://yew.rs/docs/getting-started/introduction) is recommended, though it can be summed up by those two commands (I don't remember if you need privilege for those though):
 
@@ -40,7 +86,7 @@ rustup target add wasm32-unknown-unknown
 cargo install --locked trunk
 ```
 
-### Run
+#### Run
 
 Once you have all the dependencies, you can first compile the frontend:
 
@@ -56,7 +102,7 @@ Once successfully built, you can run the server:
 
 This allows the backend to receive everything, and distribute the frontend when requested. By default, the app is available at `http://localhost:8000/front/home`.
 
-### Frontend development
+#### Frontend development
 
 If you are working on the frontend, the trunk hot-reload feature might be useful. Guess what: you can actually access it! You first need to run the backend:
 
@@ -82,7 +128,29 @@ With two special cases:
  - `/front` redirects to `/front/home` ;
  - `/backapi/capture` is dynamically dispatched, as if it weren't a subpath of `/backapi/*`
 
-The second case allows the backend to capture a request if the frontend server is upfront, as `trunk serve` will proxy `/backapi/*` to `localhost:8000`. That could be useful for having trunk hot reload and test reaction when a captured request event is received. 
+The second case allows the backend to capture a request if the frontend server is upfront, as `trunk serve` will proxy `/backapi/*` to `localhost:8000`. That could be useful for having trunk hot reload and test reaction when a captured request event is received.
+
+### Logs and Master key
+
+The master key is printed in logs when the backend starts. It is randomly generated at each start for now. 
+
+Depending on the ENV environment variable value, the logs get sent to different outputs:
+  - If `ENV=PROD`, it gets sent to the systemd journal ;
+  - If `ENV=DEBUG` or `ENV=AnythingElse`, it is sent to `stdout` (printed in terminal).
+
+If `ENV` isn't set, it default to `PROD`.
+
+## Deployment
+
+If you wish to deploy this project to you own little server, a **flake-based Nix configuration** is available in the `nix-deploy-example` folder.
+
+If you still do not want to use Nix, you can upload the compiled backend binary with the frontend files to your remote server, and configure yourself a systemd service to run the backend.
+
+To distribute the frontend files, you can either:
+  - Setup a proxy like Nginx (recommended).
+  - Sets the `FRONT_PATH=/path/to/frontend_files` environment variable in the backend binary environment.
+
+I won't write a complete guide though, but you're free to check the Nginx and the systemd service configurations I wrote in the `configuration.nix` file. 
 
 ## Dev corner
 
@@ -129,6 +197,9 @@ That's where I store the ideas of features and the things I wanna work on. There
     - Switch to "define" when clicking "add route" ; even prevent "inspect"
     - use lucide-yew instead of AI generated SVGs
 
+- Other bugs
+    - Redirect LoginPage to HomePage if user already logged-in
+
 - Codebase changes
     - Change some defaults: Inspect panel by default, maybe select default route by default?
     - Define constants and replace hardcoded values.
@@ -137,6 +208,7 @@ That's where I store the ideas of features and the things I wanna work on. There
 
 > Some ideas I had and that would be nice to implement. I don't know if I will actually implement those things, but hey, at least they lay here.
 
+- Use env variables for configuration variables (master key, proxy usage, etc).
 
 - Settings panel (for now, unused)
     - Add some settings: dark theme, tutorial, "log" (actually, toast) levels, etc

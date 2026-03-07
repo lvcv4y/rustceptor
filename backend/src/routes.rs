@@ -1,30 +1,26 @@
 use std::io::Cursor;
-use std::path::{Path, PathBuf};
+use std::path::{PathBuf, Path};
 
 use rocket::response::stream::{Event, EventStream};
 use rocket::{Data, Response, Route, State};
-use rocket::fs::NamedFile;
 use rocket::http::{Status, Cookie, CookieJar};
 use rocket::Catcher;
-use rocket::response::{Redirect, Responder};
+use rocket::response::Responder;
+use rocket::fs::NamedFile;
 
 use rocket::serde::json::Json;
 use rocket::tokio::select;
 
 use paste::paste;
 
+use crate::{FRONT_PATH, MASTER_KEY, EventChannels};
 use crate::dyn_content::*;
 use crate::models::*;
 use crate::capture::*;
-use crate::{MASTER_KEY, EventChannels};
 
 // TODO use macro or lazy_static
 pub fn routes() -> Vec<Route> {
-    routes![
-        // Redirection to frontend
-        front_redirect,
-        front_index_fix,
-
+    let mut routes = routes![
         // Api
         add,
         delete,
@@ -50,7 +46,13 @@ pub fn routes() -> Vec<Route> {
         debug_dispatcher_post,
         dispatcher_patch,
         debug_dispatcher_patch,
-    ]
+    ];
+
+    if let Some(_) = *FRONT_PATH {
+        routes.extend(routes![front_redirect]);
+    }
+
+    routes
 }
 
 // TODO use macro or lazy_static
@@ -60,17 +62,18 @@ pub fn catchers() -> impl Into<Vec<Catcher>> {
     ]
 }
 
-// Fix /front broken route using rank < 10
-#[get("/front")]
-fn front_index_fix() -> Redirect {
-    Redirect::to(uri!("/front/home"))
-}
 
 // Front redirection fallback in case of unmatched file
 #[get("/front/<_..>", rank = 11)]
-async fn front_redirect() -> Result<Option<NamedFile>, Redirect> {
-    Ok(NamedFile::open(Path::new("../frontend/dist/index.html")).await.ok())
+async fn front_redirect() -> Result<Option<NamedFile>, Status> {
+    if let Some(path) = &*FRONT_PATH {
+        Ok(NamedFile::open(Path::new(&(path.to_owned() + &"/index.html"))).await.ok())
+    } else {
+        Err(Status::from_code(500).unwrap())
+    }
 }
+
+
 
 /*
  "/backapi/<any..>" is reserved for internal backend usage. Logged-in required, except /backapi/login
@@ -185,7 +188,7 @@ fn page404() -> &'static str {
 // TODO make macro
 fn is_logged_in(jar: &CookieJar) -> bool {
     match jar.get("session").map(|c| c.value()) {
-        Some(MASTER_KEY) => true,
+        Some(s) => s == *MASTER_KEY,  // That may be unsafe (timing attack?)
         _ => false,
     }
 }
@@ -220,9 +223,9 @@ fn delete(req: Json<DeleteRouteRequest>, jar: &CookieJar) -> Status {
 
 #[post("/backapi/login", data="<login_req>")]
 fn login_post(login_req: Json<LoginRequest>, jar: &CookieJar) -> Status {
-    if login_req.key == MASTER_KEY {
+    if login_req.key == *MASTER_KEY {  // That may be unsafe (timing attack?)
         jar.add(
-            Cookie::build(("session", MASTER_KEY))
+            Cookie::build(("session", MASTER_KEY.to_string()))
                 .path("/backapi")
         );
         Status::Ok
