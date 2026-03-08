@@ -46,7 +46,7 @@ pub fn login_page() -> Html {
                             emit_toast(toast_ctx, Toast::new(ToastVariant::Error, "Login failed", Some("That's not the right master key.")));
                             auth.set(AuthState::Unauthenticated);
                         },
-                      _ => auth.set(AuthState::BackendError) // TODO: add failed auth for error message
+                      _ => auth.set(AuthState::BackendError)
                 }
             });
         })

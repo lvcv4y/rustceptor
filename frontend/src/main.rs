@@ -19,7 +19,8 @@ use crate::pages::login::LoginPage;
 pub enum AuthState {
     Authenticated,
     Unauthenticated,
-    Loading
+    BackendError,
+    Loading,
 }
 
 pub type AuthContext = UseStateHandle<AuthState>;
@@ -44,8 +45,16 @@ pub enum Route {
 fn switch(route: Route, auth: &AuthState) -> Html {
     match (&auth, route) {
         (_, Route::NotFound) => html! { <p>{ "Not found :(" }</p> },
+
         (AuthState::Unauthenticated, _) => html! { <LoginPage /> },
         (AuthState::Loading, _) => html! { <p> { "Loading..." } </p> },
+        (AuthState::BackendError, _) => html! {
+            <>
+            <h1>{ "Oops!" }</h1>
+            <p>{ "The backend seems to be broken :(. "}</p><br/>
+            <p>{" Maybe it is time to call dat stupid developer." }</p>
+            </>
+        },
         
         (_, Route::Login) => html! { <LoginPage /> },
         (AuthState::Authenticated, Route::Home) => html! { <HomePage /> },
