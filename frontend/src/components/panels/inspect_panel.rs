@@ -76,6 +76,8 @@ pub fn inspect_panel(props: &InspectPanelProps) -> Html {
         <div class="flex-1 flex overflow-hidden">
             /* Request list */
             <div class="w-72 shrink-0 border-r border-border overflow-y-auto pt-1">
+                // FIX: first element get its top a bit overflowed by the navbar.  
+                <div class="h-[7px]" /* style="background-color: red;" */ />
                 {
                     for filtered.clone().into_iter().map(|req| {
                         let req_id = req.uuid.clone();
