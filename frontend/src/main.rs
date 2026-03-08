@@ -84,8 +84,10 @@ fn App() -> Html {
                 match req {
                     Ok(r) if r.status() == 200
                         => auth.set(AuthState::Authenticated),
-                      _ => auth.set(AuthState::Unauthenticated),
-                      // TODO add 500 case
+                    Ok(r) if r.status() == 401
+                        => auth.set(AuthState::Unauthenticated),
+                      
+                      _ => auth.set(AuthState::BackendError),
                 }
             });
             || ()
