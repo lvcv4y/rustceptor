@@ -2,8 +2,9 @@ use gloo::net::http::Request;
 use wasm_bindgen_futures::spawn_local;
 use web_sys::HtmlInputElement;
 use yew::prelude::*;
+use yew_router::prelude::Redirect;
 
-use crate::{AuthContext, AuthState};
+use crate::{AuthContext, AuthState, Route};
 use crate::models::LoginRequest;
 
 #[component(LoginPage)]
@@ -20,7 +21,10 @@ pub fn login_page() -> Html {
     };
 
     
-    let submit_callback = Callback::from(move |e: SubmitEvent| {
+    let submit_callback = {
+        let auth = auth.clone();
+        
+        Callback::from(move |e: SubmitEvent| {
             e.prevent_default(); // Do not "send" the form: managed internally.
             
              // Rust is being that smartass kid
@@ -38,16 +42,20 @@ pub fn login_page() -> Html {
                       _ => auth.set(AuthState::Unauthenticated) // TODO: add failed auth for error message
                 }
             });
-        });
-    
+        })
+    };
 
-    html! {
-        <>
-            <h1>{ "Login page" }</h1>
-            <form onsubmit={submit_callback}>
-                <input placeholder={ "Da master key" } name="key" oninput={oninput} />
-                <button type={ "submit" }>{ "Login" }</button>
-            </form>
-        </>
+    if *auth == AuthState::Authenticated {
+        html! { <Redirect<Route> to={Route::Home} /> }
+    } else {
+        html! {
+            <>
+                <h1>{ "Login page" }</h1>
+                <form onsubmit={submit_callback}>
+                    <input placeholder={ "Da master key" } name="key" oninput={oninput} />
+                    <button type={ "submit" }>{ "Login" }</button>
+                </form>
+            </>
+        }
     }
 }
