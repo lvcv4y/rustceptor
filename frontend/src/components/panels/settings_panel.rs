@@ -1,5 +1,8 @@
 use yew::prelude::*;
+use lucide_yew::X;
+
 use crate::components::shared::app_button::{AppButton, Variant, Size};
+
 #[derive(Properties, PartialEq)]
 pub struct SettingsPanelProps {
     pub open: bool,
@@ -32,26 +35,13 @@ pub fn settings_panel(props: &SettingsPanelProps) -> Html {
                         size={Size::Icon} 
                         onclick={props.on_close.clone()}
                     >
-                        // Standard X icon
-                        <svg 
-                            xmlns="http://www.w3.org/2000/svg" 
-                            width="16" height="16" 
-                            viewBox="0 0 24 24" 
-                            fill="none" 
-                            stroke="currentColor" 
-                            stroke-width="2" 
-                            stroke-linecap="round" 
-                            stroke-linejoin="round" 
-                            class="w-4 h-4"
-                        >
-                            <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
-                        </svg>
+                        <X size=16 />
                     </AppButton>
                 </div>
                 
                 <div class="flex-1 p-4 space-y-4">
                     <p class="text-xs font-mono text-muted-foreground">
-                        { "Settings panel - configure your interceptor preferences here." }
+                        { "Settings panel - Coming soon (not really but)..." }
                     </p>
                 </div>
             </div>

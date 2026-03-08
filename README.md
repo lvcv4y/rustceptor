@@ -189,16 +189,9 @@ That's where I store the ideas of features and the things I wanna work on. There
 
 - UI/UX updates
     - a way to inform the user that a request was received on a given route
-    - Design a proper login page
 
 - Fix UI bugs
-    - inspect page, request selector, the very top one has a wrong margin with top navbar
-    - Switch button : color isn't correctly aligned
     - Switch to "define" when clicking "add route" ; even prevent "inspect"
-    - use lucide-yew instead of AI generated SVGs
-
-- Other bugs
-    - Redirect LoginPage to HomePage if user already logged-in
 
 - Codebase changes
     - Change some defaults: Inspect panel by default, maybe select default route by default?
