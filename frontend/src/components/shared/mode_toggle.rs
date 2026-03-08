@@ -19,7 +19,7 @@ pub fn mode_toggle(props: &ModeToggleProps) -> Html {
     // Sliding indicator logic
     let indicator_transform = match mode {
         ToggleMode::Inspect => "translate-x-0",
-        ToggleMode::Define => "translate-x-[calc(100%+4px)]",
+        ToggleMode::Define => "translate-x-[calc(100%)]",
     };
 
     // Button style helpers
