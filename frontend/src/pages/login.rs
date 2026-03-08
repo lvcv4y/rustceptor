@@ -49,13 +49,46 @@ pub fn login_page() -> Html {
         html! { <Redirect<Route> to={Route::Home} /> }
     } else {
         html! {
-            <>
-                <h1>{ "Login page" }</h1>
-                <form onsubmit={submit_callback}>
-                    <input placeholder={ "Da master key" } name="key" oninput={oninput} />
-                    <button type={ "submit" }>{ "Login" }</button>
-                </form>
-            </>
+            <div class="min-h-screen flex items-center justify-center p-4">
+                // Background glow using primary color
+                <div class="absolute w-72 h-72 rounded-full bg-primary/10 blur-3xl" />
+            
+                <div class="relative z-10 w-full max-w-sm p-8 bg-card/70 backdrop-blur-md border rounded-[var(--radius)] shadow-xl">
+                    <div class="flex flex-col space-y-2 text-center mb-8">
+                        <h1 class="text-2xl font-semibold tracking-tight">
+                            { "Welcome back" }
+                        </h1>
+                        <p class="text-sm text-muted-foreground">
+                            { "Wanna do some funny things today?" }
+                        </p>
+                    </div>
+
+                    <form onsubmit={submit_callback} class="space-y-6">
+                        <div class="space-y-2">
+                            <input 
+                                name="key"
+                                type="password"
+                                placeholder="Da master key"
+                                oninput={oninput}
+                                required=true
+                                class=r#"flex h-10 w-full rounded-[var(--radius)] border border-input bg-background px-3 py-2
+                                         text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium
+                                         placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
+                                         focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"#
+                            />
+                        </div>
+
+                        <button 
+                            type="submit" 
+                            class=r#"inline-flex items-center justify-center w-full h-10 px-4 py-2 bg-primary text-primary-foreground
+                                    hover:opacity-90 rounded-[var(--radius)] font-medium transition-colors
+                                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring shadow-sm"#
+                        >
+                            { "Login" }
+                        </button>
+                    </form>
+                </div>
+            </div>
         }
     }
 }
