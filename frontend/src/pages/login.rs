@@ -6,11 +6,13 @@ use yew_router::prelude::Redirect;
 
 use crate::{AuthContext, AuthState, Route};
 use crate::models::LoginRequest;
+use crate::components::utils::toast::{Toast, ToastContext, ToastVariant, emit_toast};
 
 #[component(LoginPage)]
 pub fn login_page() -> Html {
     let key = use_state(|| "".to_string());
     let auth = use_context::<AuthContext>().unwrap();
+    let toast_ctx = use_context::<ToastContext>().unwrap();
 
     let oninput = {
         let key: UseStateHandle<String> = key.clone();
@@ -27,9 +29,9 @@ pub fn login_page() -> Html {
         Callback::from(move |e: SubmitEvent| {
             e.prevent_default(); // Do not "send" the form: managed internally.
             
-             // Rust is being that smartass kid
             let auth = auth.clone();
             let key = key.to_string();
+            let toast_ctx = toast_ctx.clone();
 
             spawn_local(async move {
                 let req = Request::post("/backapi/login")
@@ -39,7 +41,12 @@ pub fn login_page() -> Html {
                 match req {
                     Ok(r) if r.status() == 200
                         => auth.set(AuthState::Authenticated),
-                      _ => auth.set(AuthState::Unauthenticated) // TODO: add failed auth for error message
+                    Ok(r) if r.status() == 401
+                        => {
+                            emit_toast(toast_ctx, Toast::new(ToastVariant::Error, "Login failed", Some("That's not the right master key.")));
+                            auth.set(AuthState::Unauthenticated);
+                        },
+                      _ => auth.set(AuthState::BackendError) // TODO: add failed auth for error message
                 }
             });
         })
