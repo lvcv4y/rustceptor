@@ -1,5 +1,7 @@
 use yew::prelude::*;
 use std::collections::HashMap;
+use lucide_yew::{ChevronRight, ClockAlert};
+
 use crate::components::shared::method_badge::MethodBadge; 
 use crate::models::{CapturedRequest};
 
@@ -42,7 +44,7 @@ pub fn inspect_panel(props: &InspectPanelProps) -> Html {
             <div class="flex-1 flex items-center justify-center">
                 <div class="text-center space-y-2">
                     <div class="w-10 h-10 rounded-full bg-secondary border border-border flex items-center justify-center mx-auto">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        <ClockAlert size=20 class="text-muted-foreground" />
                     </div>
                     <p class="text-sm font-mono text-muted-foreground">
                         { if props.selected_route_id.is_some() { "No captured requests on this route" } else { "No captured requests yet" } }
@@ -103,7 +105,7 @@ pub fn inspect_panel(props: &InspectPanelProps) -> Html {
                                         { req.timestamp.clone() }
                                     </p>
                                 </div>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground shrink-0"><path d="m9 18 6-6-6-6"/></svg>
+                                <ChevronRight size=14 />
                             </button>
                         }
                     })

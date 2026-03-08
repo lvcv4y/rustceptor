@@ -1,5 +1,6 @@
 use yew::prelude::*;
 use web_sys::HtmlInputElement;
+use lucide_yew::{Trash2, Save};
 
 use crate::components::shared::app_button::{AppButton, Variant, Size};
 use crate::components::shared::app_input::AppInput;
@@ -83,7 +84,7 @@ pub fn define_panel(props: &DefinePanelProps) -> Html {
                                 Callback::from(move |_| on_delete.emit(id.clone()))
                             }
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+                            <Trash2 size=14 />
                             { "Delete" }
                         </AppButton>
                     }
@@ -178,7 +179,7 @@ pub fn define_panel(props: &DefinePanelProps) -> Html {
                     onclick={on_save_click} 
                     class="w-full"
                 >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                    <Save size=16 />
                     { if props.is_new { "Create Route" } else { "Save Changes" } }
                 </AppButton>
             </div>
