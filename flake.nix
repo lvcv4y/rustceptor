@@ -132,6 +132,10 @@
         # Gotta match the Cargo.lock wasm-bindgen version
         wasm-bindgen-cli = nixpkgs-wasm.legacyPackages.${system}.wasm-bindgen-cli;
 
+	      nativeBuildInputs = [
+    		  pkgs.tailwindcss_3   # `tailwindcss` is v4 in 25.11 (TODO update?)
+    		];
+
         preBuild =
           # Somewhat needed, Trunk has some trouble finding where to build
           "export HOME=$TMPDIR;\n"
